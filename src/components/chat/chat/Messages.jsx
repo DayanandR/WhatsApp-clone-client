@@ -1,0 +1,120 @@
+import { Box } from "@mui/material";
+import Footer from "./Footer";
+import { AccountContext } from "contexts/AccountProvider";
+import { use, useContext, useEffect, useRef, useState } from "react";
+import { getMessages, newMessage } from "service/api";
+import Message from "./Message";
+
+const Messages = ({ person, conversation }) => {
+  const { account, socket, newMessageFlag, setNewMessageFlag } =
+    useContext(AccountContext);
+  const [value, setValue] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [file, setFile] = useState(null);
+  const [fileUrl, setFileUrl] = useState("");
+  const scrollRef = useRef(null);
+  const [incomingMessage, setIncomingMessage] = useState(null);
+
+  useEffect(() => {
+    socket.current.on("getMessage", (data) => {
+      setIncomingMessage({
+        ...data,
+        createdAt: Date.now(),
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    const getMessageDetails = async () => {
+      let data = await getMessages(conversation._id);
+      setMessages(data);
+    };
+    conversation?._id && getMessageDetails();
+  }, [conversation?._id, person?._id, newMessageFlag]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behaviour: "smooth" });
+  }, [messages]);
+
+  useEffect(() => {
+    incomingMessage &&
+      conversation?.members?.includes(incomingMessage.senderId) &&
+      setMessages((prev) => [...prev, incomingMessage]);
+  }, [incomingMessage, conversation]);
+
+  const sendText = async () => {
+    if (value.trim() === "") return;
+
+    let message = {};
+    if (!file) {
+      message = {
+        senderId: account.sub,
+        receieverId: person.sub,
+        conversationId: conversation._id,
+        type: "text",
+        text: value,
+      };
+    } else {
+      message = {
+        senderId: account.sub,
+        receieverId: person.sub,
+        conversationId: conversation._id,
+        type: "file",
+        text: file.name,
+        fileUrl: fileUrl,
+      };
+    }
+    socket.current.emit("sendMessage", message);
+    await newMessage(message);
+    setNewMessageFlag((prev) => !prev);
+    setValue("");
+    setFile(null);
+    setFileUrl("");
+
+    const updatedMessages = await getMessages(conversation._id);
+    setMessages(updatedMessages);
+  };
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        height: "100%",
+        backgroundImage:
+          "url(https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png)",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
+    >
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: "auto",
+          padding: "8px 16px",
+        }}
+      >
+        {messages.map((message, index) => (
+          <Message message={message} account={account} key={index} />
+        ))}
+
+        <div ref={scrollRef} />
+      </Box>
+
+      <Box sx={{ flexShrink: 0 }}>
+        <Footer
+          sendText={sendText}
+          setValue={setValue}
+          value={value}
+          file={file}
+          setFile={setFile}
+          setFileUrl={setFileUrl}
+        />
+      </Box>
+    </Box>
+  );
+};
+
+export default Messages;
