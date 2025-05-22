@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const url = "http://localhost:8000";
 
 export const addUser = async (data) => {
   try {
@@ -72,3 +72,27 @@ export const UploadFile = async (data) => {
 //     console.log("Error", error.message);
 //   }
 // };
+
+export const deleteUser = async (id) => {
+  try {
+    await axios.delete(`${url}/user/${id}`);
+  } catch (error) {
+    console.log("Error deleting user", error.message);
+  }
+};
+
+export const deleteChat = async (chatId) => {
+  try {
+    await axios.delete(`${url}/chat/${chatId}`);
+  } catch (error) {
+    console.log("Error deleting chat", error.message);
+  }
+};
+
+export const deleteMessageById = async (id) => {
+  try {
+    await axios.delete(`${url}/message/delete/${id}`);
+  } catch (error) {
+    console.log("Error deleting message", error.message);
+  }
+};

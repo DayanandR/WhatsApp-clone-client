@@ -1,9 +1,9 @@
 import { Box } from "@mui/material";
 import Footer from "./Footer";
 import { AccountContext } from "contexts/AccountProvider";
-import { use, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { getMessages, newMessage } from "service/api";
-import Message from "./Message";
+import MessageList from "./MessageList";
 
 const Messages = ({ person, conversation }) => {
   const { account, socket, newMessageFlag, setNewMessageFlag } =
@@ -96,9 +96,16 @@ const Messages = ({ person, conversation }) => {
           padding: "8px 16px",
         }}
       >
-        {messages.map((message, index) => (
-          <Message message={message} account={account} key={index} />
-        ))}
+        {messages.length > 0 && (
+          <MessageList
+            messages={messages}
+            account={account}
+            refreshMessages={async () => {
+              const updatedMessages = await getMessages(conversation._id);
+              setMessages(updatedMessages);
+            }}
+          />
+        )}
 
         <div ref={scrollRef} />
       </Box>

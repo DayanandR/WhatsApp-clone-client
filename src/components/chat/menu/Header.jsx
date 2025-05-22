@@ -39,7 +39,7 @@ const Header = () => {
             marginLeft: "auto",
           }}
         >
-          <Chat fontSize="medium" />
+          <Chat fontSize="medium" sx={{ cursor: "pointer" }} />
           <HeaderMenu />
         </Box>
       </Box>
