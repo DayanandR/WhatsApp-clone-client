@@ -26,7 +26,7 @@ const Conversations = ({ text }) => {
       );
       setFilteredUsers(filtered);
     } else {
-      const filtered = allUsers.filter(
+      const filtered = allUsers?.filter(
         (user) => String(user.sub) !== String(account?.sub)
       );
       setFilteredUsers(filtered);
