@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import { useEffect, useState, useContext } from "react";
 import { getUsers } from "service/api";
 import Conversation from "./Conversation";
@@ -8,11 +8,19 @@ const Conversations = ({ text }) => {
   const [allUsers, setAllUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const { account, socket, setActiveUsers } = useContext(AccountContext);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getUsers();
-      setAllUsers(response);
+      setLoading(true); // Set loading true before fetching
+      try {
+        const response = await getUsers();
+        setAllUsers(response);
+      } catch (error) {
+        console.error("Failed to fetch users:", error);
+      } finally {
+        setLoading(false); // Always stop loading
+      }
     };
     fetchData();
   }, []);
@@ -44,7 +52,19 @@ const Conversations = ({ text }) => {
 
   return (
     <Box>
-      {Array.isArray(filteredUsers) && filteredUsers.length > 0 ? (
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+            mt: 4,
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : filteredUsers.length > 0 ? (
         filteredUsers.map((user) => <Conversation key={user.sub} user={user} />)
       ) : (
         <Box

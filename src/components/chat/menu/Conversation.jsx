@@ -38,7 +38,7 @@ const Conversation = ({ user }) => {
       >
         <Box sx={{ width: 50, height: 50, marginRight: 2 }}>
           <img
-            src={user.picture}
+            src={user?.picture}
             alt="dp"
             style={{
               width: "100%",
