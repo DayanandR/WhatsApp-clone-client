@@ -12,14 +12,14 @@ const Conversations = ({ text }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // Set loading true before fetching
+      setLoading(true);
       try {
         const response = await getUsers();
         setAllUsers(response);
       } catch (error) {
         console.error("Failed to fetch users:", error);
       } finally {
-        setLoading(false); // Always stop loading
+        setLoading(false);
       }
     };
     fetchData();

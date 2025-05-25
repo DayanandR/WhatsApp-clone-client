@@ -8,6 +8,7 @@ import { getConversation } from "service/api";
 const ChatBox = () => {
   const { person, account } = useContext(AccountContext);
   const [conversation, setConversation] = useState({});
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     const getConversationDetails = async () => {
@@ -30,10 +31,14 @@ const ChatBox = () => {
       }}
     >
       <Box sx={{ flexShrink: 0 }}>
-        <ChatHeader person={person} />
+        <ChatHeader person={person} setSearchText={setSearchText} />
       </Box>
       <Box sx={{ flex: 1, overflowY: "auto" }}>
-        <Messages person={person} conversation={conversation} />
+        <Messages
+          person={person}
+          conversation={conversation}
+          searchText={searchText}
+        />
       </Box>
     </Box>
   );

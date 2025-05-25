@@ -1,11 +1,13 @@
 import { MoreVert, Search } from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, InputBase } from "@mui/material";
 import { emptyProfilePicture } from "../../../constants/data.js";
 import { AccountContext } from "contexts/AccountProvider.jsx";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
-const ChatHeader = ({ person }) => {
+const ChatHeader = ({ person, setSearchText }) => {
   const { activeUsers } = useContext(AccountContext);
+  const [showSearch, setShowSearch] = useState(false);
+
   return (
     <Box
       sx={{
@@ -34,8 +36,27 @@ const ChatHeader = ({ person }) => {
             : "Offline"}
         </Typography>
       </Box>
-      <Box sx={{ ml: "auto", display: "flex", alignItems: "center", gap: 2 }}>
-        <Search />
+      <Box sx={{ ml: "auto", display: "flex", alignItems: "center", gap: 1 }}>
+        {showSearch ? (
+          <InputBase
+            placeholder="Search messages"
+            onChange={(e) => setSearchText(e.target.value)}
+            autoFocus
+            sx={{
+              px: 1,
+              backgroundColor: "white",
+              borderRadius: "4px",
+              fontSize: "14px",
+              height: "30px",
+              width: "200px",
+            }}
+          />
+        ) : (
+          <Search
+            onClick={() => setShowSearch(true)}
+            sx={{ cursor: "pointer" }}
+          />
+        )}
         <MoreVert />
       </Box>
     </Box>

@@ -1,4 +1,4 @@
-import { Chat, MoreVert } from "@mui/icons-material";
+import { Chat } from "@mui/icons-material";
 import { Box } from "@mui/material";
 import { AccountContext } from "contexts/AccountProvider";
 import { useContext, useState } from "react";
