@@ -59,10 +59,13 @@ const Conversations = ({ text }) => {
             justifyContent: "center",
             alignItems: "center",
             height: "100%",
+            flexDirection: "column",
             mt: 4,
+            gap: 2,
           }}
         >
           <CircularProgress />
+          <Typography>Just a moment, loading your chat list...</Typography>
         </Box>
       ) : filteredUsers.length > 0 ? (
         filteredUsers.map((user) => <Conversation key={user.sub} user={user} />)
